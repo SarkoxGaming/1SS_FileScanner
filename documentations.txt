@@ -1,0 +1,9 @@
+Lien utilisé:
+        
+https://stackoverflow.com/questions/12000373/thread-try-catch-continue-if-access-to-file-was-denied --> try catch nom de l'Execption permission dossier 
+
+https://docs.microsoft.com/en-us/dotnet/api/system.io.ioexception?view=net-5.0 --> nom de l'exception pour les dossiers
+
+http://dotnetpattern.com/wpf-listview-itemtemplate --> comment créer une listVIew item Template en XAML
+
+https://www.wpf-tutorial.com/data-binding/value-conversion-with-ivalueconverter/ --> Comment faire un converters

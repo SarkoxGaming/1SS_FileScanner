@@ -20,8 +20,7 @@ namespace FileScanner.ViewModels
 
         public ObservableCollection<string> FolderItems { 
             get => folderItems;
-            set 
-            { 
+            set { 
                 folderItems = value;
                 OnPropertyChanged();
             }
@@ -51,37 +50,58 @@ namespace FileScanner.ViewModels
 
         private void OpenFolder(string obj)
         {
-            using (var fbd = new FolderBrowserDialog())
+            try
             {
-                if (fbd.ShowDialog() == DialogResult.OK)
+                using (var fbd = new FolderBrowserDialog())
                 {
-                    SelectedFolder = fbd.SelectedPath;
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        SelectedFolder = fbd.SelectedPath;
+                    }
                 }
+            } catch (IOException e)
+            {
+                System.Windows.MessageBox.Show("Il y a une erreur dans l'ouverture du dossier: " + e);
             }
         }
 
-        private void ScanFolder(string dir)
+        private async void ScanFolder(string dir)
         {
-            FolderItems = new ObservableCollection<string>(GetDirs(dir));
-            
-            foreach (var item in Directory.EnumerateFiles(dir, "*"))
+            _ = Task.Run(() =>
             {
-                FolderItems.Add(item);
-            }
+                 
+                FolderItems = new ObservableCollection<string>(GetDirs(dir));
+                foreach (var item in Directory.EnumerateFiles(dir, "*"))
+                {
+                    FolderItems.Add(item);
+                }
+  
+            });
         }
 
         IEnumerable<string> GetDirs(string dir)
-        {            
+        {
             foreach (var d in Directory.EnumerateDirectories(dir, "*"))
             {
+                IEnumerable<string> files;
+                try
+                {
+                    files = Directory.EnumerateFiles(d, "*");
+                } catch(Exception e)
+                {
+                    continue;
+                }
+                foreach (var file in files)
+                {
+                    yield return file;
+                }
+                var temp = GetDirs(d);
+                foreach (var dd in temp)
+                {
+                    yield return dd;
+                }
                 yield return d;
             }
         }
-
-        ///TODO : Tester avec un dossier avec beaucoup de fichier
-        ///TODO : Rendre l'application asynchrone
-        ///TODO : Ajouter un try/catch pour les dossiers sans permission
-
-
     }
 }
